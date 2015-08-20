@@ -1,7 +1,19 @@
 var express = require('express');
+var router = express.Router();
 var app = express();
 
+//app.use('/api', apiRoutes);
 app.use(express.static(__dirname + '/public'));
+// Here's the new code:
+app.use('/*', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+
+//app.get('/', router);
+//app.get('*', router);
+//app.use(express.static(__dirname + '/public'));
+
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/sp500', function (error) {

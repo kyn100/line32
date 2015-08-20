@@ -150,7 +150,10 @@
                           templateUrl: 'chapter.html',
                           controller: 'ChapterCtrl',
                           controllerAs: 'chapter'
-                      });
+                      })
+                    .when('/hello', {
+                        templateUrl: 'hello.html'
+                    });
 
                     $locationProvider.html5Mode(true);
                 }])
