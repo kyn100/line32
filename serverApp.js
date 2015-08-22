@@ -1,4 +1,5 @@
 var express = require('express');
+var routes = require('./routes');
 var router = express.Router();
 var app = express();
 
@@ -9,9 +10,10 @@ app.use('/*', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-
-//app.get('/', router);
-//app.get('*', router);
+app.get('/partials/:filename', routes.partials);
+app.use(routes.index);
+//app.get('/', routes.index);
+//app.get('/about', routes.about);
 //app.use(express.static(__dirname + '/public'));
 
 
