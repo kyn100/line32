@@ -4,7 +4,6 @@
  */
 
 exports.name = function (req, res) {
-    res.json({
-        name: 'Bob'
-    });
+    var name = req.params.name;
+    res.render('api/' + name);    
 };

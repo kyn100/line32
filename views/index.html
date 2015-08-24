@@ -112,11 +112,11 @@
 
         <div data-ng-controller="MainCtrl as main">
           Choose:
-          <a href="partial/about">About</a> |
-          <a href="partial/hello">Hello</a> |
-          
-           <div class="view-animate-container">
-            <div ng-view class="view-animate"></div>
+          <a href="/about">About</a> |
+          <a href="/hello">Hello</a> |
+            <a href="/sp500">sp500</a>
+           <div>
+            <div ng-view style="height: 400px;"></div>
           </div>
           
         </div>
@@ -134,14 +134,18 @@
                 function ($routeProvider, $locationProvider) {
                     $routeProvider
                       .when('/about', {
-                          templateUrl: 'partials/book.html'
+                          templateUrl: 'partials/book.html',
+                                controller: 'BookCtrl'
                       })                     
                       .when('/hello', {
                           templateUrl: 'partials/hello.html'
-                          
                       })
-                        .otherwise({
-                            redirectTo: '/about'
+                    .when('/sp500', {
+                        templateUrl: 'partials/sp500.html',
+                        controller: 'sp500Ctrl'
+                    })
+                    .otherwise({
+                    redirectTo: '/about'
                     });
 
                     $locationProvider.html5Mode({
@@ -159,6 +163,11 @@
                   this.name = "BookCtrl";
                   this.params = $routeParams;
               }])
+                .controller('sp500Ctrl', function($scope, $http){
+                        $http.get('/api/sp500')
+                                .success(function(response) {$scope.data = response;});
+                        //$scope.data =
+                })
               .controller('ChapterCtrl', ['$routeParams', function ($routeParams) {
                   this.name = "ChapterCtrl";
                   this.params = $routeParams;

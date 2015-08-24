@@ -15,7 +15,6 @@ var express = require('express'),
 
 var app = module.exports = express();
 
-
 /**
  * Configuration
  */
@@ -35,28 +34,49 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var env = process.env.NODE_ENV || 'development';
 
-// development only
-if (env === 'development') {
-    //app.use(express.errorHandler());
-}
 
-// production only
-if (env === 'production') {
-    // TODO
-}
+/*
+ database
+ */
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/sp500', function (error) {
+    if (error) {
+        console.log(error);
+    }
+});
 
+var Schema = mongoose.Schema;
+var pwdSchema = new Schema({
+    name: String,
+    value: String
+});
+
+app.get('/', routes.index);
+/**
+ * View Routes
+ */
+var routerView = express.Router();
+routerView.get('/partials/:name', routes.partials);
+app.use('/', routerView);
 
 /**
- * Routes
+ * API Routes
  */
+var routerApi = express.Router();              // get an instance of the express Router
+// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+routerApi.get('/sp500', function(req, res) {
+    //res.json({ message: 'hooray! welcome to our api!' });
+// Mongoose Model definition
+    var SP500 = mongoose.model('SP500', pwdSchema, 'sp500');
+    SP500.find({ 'etf': 'true' }, function (err, docs) {
+        if (err) return console.error(err);
+        res.json(docs);
+    });
+});
 
-// serve index and view partials
-app.get('/', routes.index);
-app.get('/partials/:name', routes.partials);
-
-// JSON API
-app.get('/api/name', api.name);
-
+// REGISTER OUR ROUTES -------------------------------
+// all of our routes will be prefixed with /api
+app.use('/api', routerApi);
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
 
@@ -64,7 +84,6 @@ app.get('*', routes.index);
 /**
  * Start Server
  */
-
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
