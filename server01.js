@@ -34,7 +34,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var env = process.env.NODE_ENV || 'development';
 
-
 /*
  database
  */
@@ -45,10 +44,14 @@ mongoose.connect('mongodb://localhost/sp500', function (error) {
     }
 });
 
-var Schema = mongoose.Schema;
-var pwdSchema = new Schema({
+var pwdSchema = new mongoose.Schema({
+    symbol: String,
     name: String,
-    value: String
+    category: String,
+    etf: String,
+    issuer: String,
+    action: String,
+    modified: String
 });
 
 app.get('/', routes.index);
@@ -63,9 +66,7 @@ app.use('/', routerView);
  * API Routes
  */
 var routerApi = express.Router();              // get an instance of the express Router
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
 routerApi.get('/sp500', function(req, res) {
-    //res.json({ message: 'hooray! welcome to our api!' });
 // Mongoose Model definition
     var SP500 = mongoose.model('SP500', pwdSchema, 'sp500');
     SP500.find({ 'etf': 'true' }, function (err, docs) {
@@ -75,7 +76,7 @@ routerApi.get('/sp500', function(req, res) {
 });
 
 // REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
+//api
 app.use('/api', routerApi);
 // redirect all others to the index (HTML5 history)
 app.get('*', routes.index);
